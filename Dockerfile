@@ -6,4 +6,4 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD sh -c "python -m uvicorn api:app --host 0.0.0.0 --port $PORT"
+CMD sh -c "PORT=${PORT:-8080} && echo Running on $PORT && python -m uvicorn api:app --host 0.0.0.0 --port $PORT"
