@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InfraCheck</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Fira+Code:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+
+  <style>
+    :root {
+      --bg:         #0A0A0B;
+      --bg2:        #111113;
+      --bg3:        #1A1A1D;
+      --border:     #2A2A2E;
+      --gold:       #F5A623;
+      --gold-dim:   #C47F0C;
+      --gold-glow:  rgba(245,166,35,0.15);
+      --red:        #FF4444;
+      --orange:     #FF8C00;
+      --yellow:     #FFD700;
+      --green:      #00C896;
+      --text:       #F0EDE8;
+      --text-dim:   #888580;
+      --text-faint: #444240;
+      --mono:       'Fira Code', monospace;
+      --serif:      'Playfair Display', serif;
+      --sans:       'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    header {
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--gold);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      animation: pulse-icon 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-icon {
+      0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+      50% { box-shadow: 0 0 20px 8px var(--gold-glow); }
+    }
+
+    .logo-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .logo-name span { color: var(--gold); }
+
+    .hero {
+      margin-bottom: 48px;
+      animation: fade-up 0.6s ease both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 em { font-style: normal; color: var(--gold); }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--text-dim);
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 48px;
+      animation: fade-up 0.6s 0.1s ease both;
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 4px; }
+
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-faint);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      animation: fade-up 0.6s 0.2s ease both;
+    }
+
+    @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .panel:hover::before { opacity: 1; }
+
+    .panel-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-label::before { content: ''; width: 16px; height: 1px; background: var(--gold); }
+
+    .editor-wrap { grid-column: 1; display: flex; flex-direction: column; }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 320px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 20px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      tab-size: 2;
+    }
+
+    textarea:focus { border-color: var(--gold-dim); box-shadow: inset 0 0 0 1px var(--gold-glow); }
+    textarea::placeholder { color: var(--text-faint); }
+
+    .controls { display: flex; gap: 12px; margin-top: 16px; align-items: center; }
+
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 14px;
+      outline: none;
+      cursor: pointer;
+      flex: 1;
+      transition: border-color 0.2s;
+    }
+
+    select:focus { border-color: var(--gold-dim); }
+
+    .btn-analyze {
+      background: var(--gold);
+      color: #0A0A0B;
+      border: none;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-analyze:hover { background: #FFB84D; transform: translateY(-1px); }
+    .btn-analyze:active { transform: translateY(0); }
+    .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-analyze .btn-text { transition: opacity 0.2s; }
+    .btn-analyze.loading .btn-text { opacity: 0; }
+
+    .spinner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .btn-analyze.loading .spinner { opacity: 1; }
+
+    .spinner::after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border: 2px solid #0A0A0B;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results-wrap { grid-column: 2; display: flex; flex-direction: column; gap: 16px; }
+
+    .verdict-box {
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s;
+    }
+
+    .verdict-box.safe   { border-color: var(--green); }
+    .verdict-box.warn   { border-color: var(--orange); }
+    .verdict-box.danger { border-color: var(--red); }
+
+    .verdict-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    .verdict-box.safe::after   { background: var(--green); }
+    .verdict-box.warn::after   { background: var(--orange); }
+    .verdict-box.danger::after { background: var(--red); }
+
+    .verdict-icon {
+      font-size: 28px;
+      line-height: 1;
+      animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .verdict-text { flex: 1; }
+
+    .verdict-title {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .verdict-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      font-family: var(--mono);
+    }
+
+    .resources-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      animation: slide-in 0.3s ease both;
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .resource-dot { width: 6px; height: 6px; background: var(--gold); flex-shrink: 0; }
+    .resource-name { font-family: var(--mono); font-size: 12px; color: var(--text); flex: 1; }
+    .resource-type { font-size: 11px; color: var(--text-faint); font-family: var(--mono); }
+
+    .issue-item {
+      padding: 14px 16px;
+      border-left: 3px solid var(--border);
+      background: var(--bg3);
+      animation: slide-in 0.3s ease both;
+    }
+
+    .issue-item.critical { border-color: var(--red); }
+    .issue-item.high     { border-color: var(--orange); }
+    .issue-item.medium   { border-color: var(--yellow); }
+
+    .issue-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+
+    .issue-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 2px 7px;
+      font-weight: 500;
+    }
+
+    .issue-badge.critical { background: rgba(255,68,68,0.15); color: var(--red); }
+    .issue-badge.high     { background: rgba(255,140,0,0.15);  color: var(--orange); }
+    .issue-badge.medium   { background: rgba(255,215,0,0.15);  color: var(--yellow); }
+
+    .issue-rule { font-size: 13px; font-weight: 500; color: var(--text); }
+
+    .issue-message {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .issue-fix {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--gold);
+      background: var(--gold-glow);
+      padding: 6px 10px;
+      border-left: 2px solid var(--gold);
+    }
+
+    .cost-table { width: 100%; border-collapse: collapse; }
+
+    .cost-table td {
+      padding: 8px 12px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cost-table td:first-child { font-family: var(--mono); color: var(--text-dim); }
+    .cost-table td:last-child { text-align: right; font-family: var(--mono); color: var(--text); }
+
+    .cost-table .source-live   { color: var(--green); font-size: 10px; }
+    .cost-table .source-fixed  { color: #6699FF;      font-size: 10px; }
+    .cost-table .source-est    { color: var(--yellow); font-size: 10px; }
+
+    .cost-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 12px 0;
+      border-top: 1px solid var(--gold-dim);
+      margin-top: 4px;
+    }
+
+    .cost-total-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cost-total-value { font-family: var(--serif); font-size: 26px; color: var(--gold); }
+
+    .cost-annual {
+      font-size: 11px;
+      color: var(--text-faint);
+      font-family: var(--mono);
+      text-align: right;
+      margin-top: 4px;
+      padding: 0 12px;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      background: var(--bg2);
+    }
+
+    .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+
+    .empty-text {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-faint);
+      line-height: 1.6;
+    }
+
+    /* Auth UI */
+    .auth-area { display: flex; align-items: center; gap: 12px; }
+
+    .auth-email {
+      color: var(--text-dim);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+
+    .btn-auth {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 8px 20px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-signin {
+      background: var(--gold);
+      color: #0A0A0B;
+    }
+
+    .btn-signin:hover { background: #FFB84D; }
+
+    .btn-signout {
+      background: none;
+      border: 1px solid var(--border) !important;
+      color: var(--text-dim);
+    }
+
+    .btn-signout:hover { border-color: var(--gold-dim) !important; color: var(--text); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      margin-top: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+    .footer-left span { color: var(--gold); }
+    .footer-right { font-size: 11px; color: var(--text-faint); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+    .section-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before { content: ''; width: 16px; height: 1px; background: var(--gold); }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-6px); }
+      75%       { transform: translateX(6px); }
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-name">Infra<span>Check</span></span>
+      </div>
+      <div id="auth-area" class="auth-area">
+        <span style="color: var(--text-faint); font-family: var(--mono); font-size: 11px;">Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Deploy with <em>certainty.</em><br/>Not with hope.</h1>
+    <p>Paste your IaC code. InfraCheck analyses security vulnerabilities, estimates real costs, and tells you if it's safe to ship — in seconds.</p>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-value">20</span>
+      <span class="stat-label">Security Rules</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-value">Live</span>
+      <span class="stat-label">Azure Pricing</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-value">0</span>
+      <span class="stat-label">Subscriptions Needed</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-value">&lt;5s</span>
+      <span class="stat-label">Analysis Time</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel editor-wrap">
+      <div class="panel-label">IaC Input</div>
+      <textarea
+        id="code-input"
+        placeholder="// Paste your Bicep or IaC code here...
+resource myStorage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+  name: 'mystorageaccount'
+  location: 'eastus'
+  sku: { name: 'Standard_LRS' }
+  kind: 'StorageV2'
+}"
+      ></textarea>
+      <div class="controls">
+        <select id="region-select">
+          <option value="eastus">East US</option>
+          <option value="westus">West US</option>
+          <option value="westeurope">West Europe</option>
+          <option value="southeastasia">Southeast Asia</option>
+          <option value="centralindia">Central India</option>
+        </select>
+        <button class="btn-analyze" id="analyze-btn" onclick="analyze()">
+          <span class="btn-text">Analyze →</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="results-wrap" id="results-wrap">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">⬡</div>
+        <div class="empty-text">
+          Paste your IaC code and click Analyze<br/>
+          Results will appear here
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">
+      <span>InfraCheck</span> — IaC Safety Platform
+    </div>
+    <div class="footer-right">
+      Prices sourced live from Azure Retail Pricing API
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+
+  // ── AUTH0 CONFIG ──
+  // Replace with your actual values
+  const AUTH_DOMAIN   = 'dev-13oqnlj5zuey0dqr.us.auth0.com';
+  const AUTH_CLIENT_ID = 'qo4JNaub4w2pJzX0MOlPXeC02reRIDfe';
+
+  let auth0Client = null;
+
+  async function initAuth0() {
+    try {
+      auth0Client = await auth0.createAuth0Client({
+        domain: AUTH_DOMAIN,
+        clientId: AUTH_CLIENT_ID,
+        authorizationParams: {
+          redirect_uri: window.location.origin
+        }
+      });
+
+      // Handle redirect after login
+      if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+        await auth0Client.handleRedirectCallback();
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      await updateAuthUI();
+
+    } catch (err) {
+      console.error('Auth0 init error:', err);
+      document.getElementById('auth-area').innerHTML =
+        '<span style="color: var(--text-faint); font-family: var(--mono); font-size: 11px;">Auth unavailable</span>';
+    }
+  }
+
+  async function updateAuthUI() {
+    const area = document.getElementById('auth-area');
+    const isAuthenticated = await auth0Client.isAuthenticated();
+
+    if (isAuthenticated) {
+      const user = await auth0Client.getUser();
+      area.innerHTML = `
+        <span class="auth-email">${user.email}</span>
+        <button class="btn-auth btn-signout" onclick="logout()">SIGN OUT</button>
+      `;
+    } else {
+      area.innerHTML = `
+        <button class="btn-auth btn-signin" onclick="login()">SIGN IN</button>
+      `;
+    }
+  }
+
+  async function login() {
+    await auth0Client.loginWithRedirect({
+      authorizationParams: {
+        redirect_uri: window.location.origin
+      }
+    });
+  }
+
+  async function logout() {
+    await auth0Client.logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
+  }
+
+  window.addEventListener('load', initAuth0);
+
+  // ── ANALYZE ──
+  async function analyze() {
+    const code   = document.getElementById('code-input').value.trim();
+    const region = document.getElementById('region-select').value;
+    const btn    = document.getElementById('analyze-btn');
+
+    if (!code) { shake(document.getElementById('code-input')); return; }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+      const res = await fetch(`${API}/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, region })
+      });
+
+      const data = await res.json();
+      if (!data.success) { showError(data.error || 'Analysis failed'); return; }
+      renderResults(data);
+
+    } catch (err) {
+      showError('Cannot connect to InfraCheck API. Make sure the server is running.');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+  }
+
+  function renderResults(data) {
+    const wrap = document.getElementById('results-wrap');
+    wrap.innerHTML = '';
+
+    const verdictMap = {
+      'SAFE_TO_DEPLOY':      { cls: 'safe',   icon: '✦', title: 'Safe to Deploy',      sub: 'No critical issues found' },
+      'DEPLOY_WITH_CAUTION': { cls: 'warn',   icon: '◈', title: 'Deploy with Caution', sub: 'High severity issues detected' },
+      'DO_NOT_DEPLOY':       { cls: 'danger', icon: '✕', title: 'Do Not Deploy',        sub: 'Critical security issues found' },
+      'MOSTLY_SAFE':         { cls: 'warn',   icon: '◇', title: 'Mostly Safe',          sub: 'Minor issues detected' },
+      'REVIEW_COSTS':        { cls: 'warn',   icon: '◈', title: 'Review Costs',         sub: 'High spend detected' },
+    };
+
+    const v = verdictMap[data.verdict] || verdictMap['SAFE_TO_DEPLOY'];
+
+    wrap.innerHTML += `
+      <div class="verdict-box ${v.cls}">
+        <div class="verdict-icon">${v.icon}</div>
+        <div class="verdict-text">
+          <div class="verdict-title">${v.title}</div>
+          <div class="verdict-sub">${v.sub}</div>
+        </div>
+      </div>`;
+
+    if (data.resources?.length) {
+      wrap.innerHTML += `<div class="section-title">Resources Found</div>`;
+      const list = document.createElement('div');
+      list.className = 'resources-list';
+      data.resources.forEach((r, i) => {
+        const el = document.createElement('div');
+        el.className = 'resource-item';
+        el.style.animationDelay = `${i * 0.05}s`;
+        el.innerHTML = `
+          <div class="resource-dot"></div>
+          <span class="resource-name">${r.name}</span>
+          <span class="resource-type">${r.type.split('/').pop()}</span>`;
+        list.appendChild(el);
+      });
+      wrap.appendChild(list);
+    }
+
+    wrap.innerHTML += `<div class="section-title">Security Scan</div>`;
+
+    if (!data.security_issues?.length) {
+      wrap.innerHTML += `
+        <div class="issue-item" style="border-color: var(--green)">
+          <div class="issue-header">
+            <span class="issue-rule" style="color: var(--green)">✓ No security issues found</span>
+          </div>
+        </div>`;
+    } else {
+      data.security_issues.forEach((issue, i) => {
+        const cls = issue.severity.toLowerCase();
+        wrap.innerHTML += `
+          <div class="issue-item ${cls}" style="animation-delay: ${i * 0.07}s">
+            <div class="issue-header">
+              <span class="issue-badge ${cls}">${issue.severity}</span>
+              <span class="issue-rule">${issue.rule}</span>
+            </div>
+            <div class="issue-message">${issue.message}</div>
+            <div class="issue-fix">Fix → ${issue.fix}</div>
+          </div>`;
+      });
+    }
+
+    wrap.innerHTML += `<div class="section-title">Cost Estimation</div>`;
+    const costPanel = document.createElement('div');
+    costPanel.className = 'panel';
+    costPanel.style.padding = '16px 0';
+
+    let tableHTML = `<table class="cost-table">`;
+    data.cost.breakdown.forEach(item => {
+      const sourceLabel =
+        item.source === 'live'  ? '<span class="source-live">● LIVE</span>'   :
+        item.source === 'fixed' ? '<span class="source-fixed">● FIXED</span>' :
+        '<span class="source-est">● EST</span>';
+      const cost = item.monthly_cost === 0 ? 'FREE' : `$${item.monthly_cost.toFixed(2)}`;
+      tableHTML += `<tr><td>${item.resource_name} ${sourceLabel}</td><td>${cost}/mo</td></tr>`;
+    });
+
+    tableHTML += `</table>
+      <div class="cost-total">
+        <span class="cost-total-label">Monthly Total</span>
+        <span class="cost-total-value" id="cost-counter">$0.00</span>
+      </div>
+      <div class="cost-annual">$${data.cost.total_annual.toFixed(2)} / year</div>`;
+
+    costPanel.innerHTML = tableHTML;
+    wrap.appendChild(costPanel);
+    animateCounter('cost-counter', data.cost.total_monthly);
+  }
+
+  function animateCounter(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const duration = 800;
+    const start = performance.now();
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = `$${(ease * target).toFixed(2)}`;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function showError(msg) {
+    document.getElementById('results-wrap').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">✕</div>
+        <div class="empty-text">${msg}</div>
+      </div>`;
+  }
+
+  function shake(el) {
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'shake 0.3s ease';
+    el.addEventListener('animationend', () => el.style.animation = '', { once: true });
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') analyze();
+  });
+</script>
+</body>
+</html>

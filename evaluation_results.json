@@ -1,0 +1,448 @@
+{
+  "TP": 94,
+  "FP": 0,
+  "FN": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "per_file": [
+    {
+      "file": "01_public_blob.bicep",
+      "expected": [
+        "Public Blob Access Enabled",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Public Blob Access Enabled",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 6,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "02_ssh_open.bicep",
+      "expected": [
+        "SSH Open To Internet",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "SSH Open To Internet",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "03_rdp_open.bicep",
+      "expected": [
+        "RDP Open To Internet",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "RDP Open To Internet",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "04_http_not_https.bicep",
+      "expected": [
+        "HTTPS Not Enforced",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "HTTPS Not Enforced",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "05_missing_nsg.bicep",
+      "expected": [
+        "No NSG Found",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "No NSG Found",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "06_wildcard_ports.bicep",
+      "expected": [
+        "Wildcard Port Range",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Wildcard Port Range",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "07_storage_no_firewall.bicep",
+      "expected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "08_storage_http.bicep",
+      "expected": [
+        "Storage Allows HTTP Traffic",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Allows HTTP Traffic",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 6,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "09_no_soft_delete.bicep",
+      "expected": [
+        "Storage Soft Delete Not Enabled",
+        "Storage Account No Firewall",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "10_disk_not_encrypted.bicep",
+      "expected": [
+        "VM Disk Encryption Not Configured",
+        "No Managed Identity Assigned",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "VM Disk Encryption Not Configured",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "No Managed Identity Assigned"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "11_keyvault_no_softdelete.bicep",
+      "expected": [
+        "Key Vault Soft Delete Disabled",
+        "Key Vault No Access Policies",
+        "Key Vault Purge Protection Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Key Vault Soft Delete Disabled",
+        "Key Vault No Access Policies",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "Key Vault Purge Protection Not Enabled"
+      ],
+      "TP": 6,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "12_keyvault_no_access_policies.bicep",
+      "expected": [
+        "Key Vault No Access Policies",
+        "Key Vault Purge Protection Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Key Vault No Access Policies",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "Key Vault Purge Protection Not Enabled"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "13_no_resource_lock.bicep",
+      "expected": [
+        "No Resource Lock Defined",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "14_no_diagnostic_settings.bicep",
+      "expected": [
+        "No Diagnostic Settings Configured",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "15_no_tags.bicep",
+      "expected": [
+        "No Tags Defined",
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "Storage Account No Firewall",
+        "Storage Soft Delete Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "16_winrm_open.bicep",
+      "expected": [
+        "WinRM Open To Internet",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "WinRM Open To Internet"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "17_all_inbound.bicep",
+      "expected": [
+        "All Inbound Traffic Allowed",
+        "Wildcard Port Range",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "Wildcard Port Range",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "All Inbound Traffic Allowed"
+      ],
+      "TP": 4,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "18_appservice_no_tls.bicep",
+      "expected": [
+        "App Service Minimum TLS Not Set",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "App Service Minimum TLS Not Set"
+      ],
+      "TP": 3,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "19_no_managed_identity.bicep",
+      "expected": [
+        "No Managed Identity Assigned",
+        "VM Disk Encryption Not Configured",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "VM Disk Encryption Not Configured",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "No Managed Identity Assigned"
+      ],
+      "TP": 5,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "20_keyvault_no_purge.bicep",
+      "expected": [
+        "Key Vault Purge Protection Not Enabled",
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined"
+      ],
+      "detected": [
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured",
+        "No Tags Defined",
+        "Key Vault Purge Protection Not Enabled"
+      ],
+      "TP": 4,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "21_clean_storage.bicep",
+      "expected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "TP": 1,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "22_clean_keyvault.bicep",
+      "expected": [
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured"
+      ],
+      "TP": 2,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "23_clean_nsg.bicep",
+      "expected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "TP": 1,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "24_clean_vm.bicep",
+      "expected": [
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "No Resource Lock Defined",
+        "No Diagnostic Settings Configured"
+      ],
+      "TP": 2,
+      "FP": 0,
+      "FN": 0
+    },
+    {
+      "file": "25_clean_webapp.bicep",
+      "expected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "detected": [
+        "No Diagnostic Settings Configured"
+      ],
+      "TP": 1,
+      "FP": 0,
+      "FN": 0
+    }
+  ]
+}
